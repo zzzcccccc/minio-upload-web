@@ -17,6 +17,7 @@ const fileUploadChunkQueue = ref({}).value
 const getTaskInfo = async (file) => {
     let task;
     const identifier = await md5(file)
+    console.log("identifier："+identifier)
     const { code, data, msg } = await taskInfo(identifier)
     if (code === 0) {
         task = data
@@ -72,6 +73,7 @@ const handleUpload = (file, taskRecord, options) => {
         const end = start + new Number(chunkSize)
         const blob = file.slice(start, end)
         const { code, data, msg } = await preSignUrl({ identifier: fileIdentifier, partNumber: partNumber} )
+        console.log("分片:"+partNumber+",获取预签名分片上传地址："+data)
         if (code === 0 && data) {
             await axios.request({
                 url: data,
@@ -166,6 +168,7 @@ const handleHttpRequest = async (options) => {
             }
             const { code, data, msg } = await merge(identifier)
             if (code === 0) {
+                console.log("path:",path)
                 return path;
             } else {
                 ElNotification.error({
